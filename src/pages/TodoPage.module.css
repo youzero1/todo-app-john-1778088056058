@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 50%, #fdf2f8 100%);
+  background: linear-gradient(135deg, #fff1f1 0%, #fff5f5 50%, #fdf2f2 100%);
   display: flex;
   align-items: flex-start;
   justify-content: center;

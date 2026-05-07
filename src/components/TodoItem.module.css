@@ -8,7 +8,7 @@
 }
 
 .item:hover {
-  background: #fafbff;
+  background: #fff8f8;
 }
 
 .completed {
@@ -16,7 +16,7 @@
 }
 
 .editing {
-  background: #f5f3ff;
+  background: #fff1f1;
 }
 
 .row {
@@ -106,7 +106,7 @@
 }
 
 .deleteBtn:hover {
-  background: #fee2e2;
+  background: #fecaca;
   color: var(--color-danger);
 }
 

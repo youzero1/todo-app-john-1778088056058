@@ -1,62 +1,104 @@
+import { useRef, useEffect, useState } from 'react';
+import { CheckSquare, Keyboard } from 'lucide-react';
 import styles from './TodoPage.module.css';
-import { useTodos } from '@/hooks/useTodos';
 import AddTodoForm from '@/components/AddTodoForm';
-import TodoList from '@/components/TodoList';
 import FilterBar from '@/components/FilterBar';
+import TodoList from '@/components/TodoList';
 import TodoStats from '@/components/TodoStats';
+import KeyboardShortcutsHelp from '@/components/KeyboardShortcutsHelp';
+import { useTodos } from '@/hooks/useTodos';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 
 export default function TodoPage() {
-  const todoState = useTodos();
+  const {
+    filteredTodos,
+    filter,
+    setFilter,
+    editingId,
+    setEditingId,
+    addTodo,
+    toggleTodo,
+    deleteTodo,
+    editTodo,
+    clearCompleted,
+    toggleAll,
+    activeCount,
+    completedCount,
+    todos,
+  } = useTodos();
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [showHelp, setShowHelp] = useState(false);
+
+  const allCompleted = todos.length > 0 && todos.every((t) => t.completed);
+
+  useKeyboardShortcuts({
+    onFocusInput: () => inputRef.current?.focus(),
+    onSetFilter: setFilter,
+    onToggleAll: toggleAll,
+    onClearCompleted: clearCompleted,
+    isEditing: editingId !== null,
+  });
+
+  useEffect(() => {
+    const handler = () => setShowHelp((v) => !v);
+    document.addEventListener('todo:toggle-help', handler);
+    return () => document.removeEventListener('todo:toggle-help', handler);
+  }, []);
 
   return (
     <div className={styles.page}>
       <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.logoWrap}>
-            <span className={styles.logoIcon}>✓</span>
+            <CheckSquare className={styles.logoIcon} />
           </div>
           <h1 className={styles.title}>My Todos</h1>
-          <p className={styles.subtitle}>Stay organized, get things done.</p>
+          <p className={styles.subtitle}>Stay organized, stay productive</p>
+          <button className={styles.helpBtn} onClick={() => setShowHelp((v) => !v)}>
+            <Keyboard size={14} />
+            Keyboard Shortcuts
+          </button>
         </header>
 
         <main className={styles.main}>
-          <AddTodoForm onAdd={todoState.addTodo} />
+          <AddTodoForm onAdd={addTodo} inputRef={inputRef as React.RefObject<HTMLInputElement>} />
 
-          {todoState.todos.length > 0 && (
+          {todos.length === 0 ? (
+            <div className={styles.empty}>
+              <span className={styles.emptyIcon}>📝</span>
+              <p className={styles.emptyText}>No todos yet. Add one above!</p>
+            </div>
+          ) : (
             <>
               <FilterBar
-                filter={todoState.filter}
-                setFilter={todoState.setFilter}
-                activeCount={todoState.activeCount}
-                completedCount={todoState.completedCount}
-                totalCount={todoState.todos.length}
+                filter={filter}
+                setFilter={setFilter}
+                activeCount={activeCount}
+                completedCount={completedCount}
+                totalCount={todos.length}
               />
               <TodoList
-                filteredTodos={todoState.filteredTodos}
-                editingId={todoState.editingId}
-                setEditingId={todoState.setEditingId}
-                onToggle={todoState.toggleTodo}
-                onDelete={todoState.deleteTodo}
-                onEdit={todoState.editTodo}
-                onToggleAll={todoState.toggleAll}
-                allCompleted={todoState.activeCount === 0 && todoState.todos.length > 0}
+                filteredTodos={filteredTodos}
+                editingId={editingId}
+                setEditingId={setEditingId}
+                onToggle={toggleTodo}
+                onDelete={deleteTodo}
+                onEdit={editTodo}
+                onToggleAll={toggleAll}
+                allCompleted={allCompleted}
               />
               <TodoStats
-                activeCount={todoState.activeCount}
-                completedCount={todoState.completedCount}
-                onClearCompleted={todoState.clearCompleted}
+                activeCount={activeCount}
+                completedCount={completedCount}
+                onClearCompleted={clearCompleted}
               />
             </>
           )}
-
-          {todoState.todos.length === 0 && (
-            <div className={styles.empty}>
-              <span className={styles.emptyIcon}>📋</span>
-              <p className={styles.emptyText}>No todos yet. Add one above!</p>
-            </div>
-          )}
         </main>
       </div>
+
+      {showHelp && <KeyboardShortcutsHelp onClose={() => setShowHelp(false)} />}
     </div>
   );
 }

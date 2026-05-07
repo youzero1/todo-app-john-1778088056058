@@ -4,9 +4,10 @@ import styles from './AddTodoForm.module.css';
 
 type AddTodoFormProps = {
   onAdd: (text: string) => void;
+  inputRef?: React.RefObject<HTMLInputElement | null>;
 };
 
-export default function AddTodoForm({ onAdd }: AddTodoFormProps) {
+export default function AddTodoForm({ onAdd, inputRef }: AddTodoFormProps) {
   const [value, setValue] = useState('');
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -20,9 +21,10 @@ export default function AddTodoForm({ onAdd }: AddTodoFormProps) {
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
       <input
+        ref={inputRef}
         className={styles.input}
         type="text"
-        placeholder="What needs to be done?"
+        placeholder="What needs to be done? (press N to focus)"
         value={value}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.target.value)}
         autoFocus

@@ -66,7 +66,6 @@ export default function TodoPage() {
 
           {todos.length === 0 ? (
             <div className={styles.empty}>
-              <span className={styles.emptyIcon}>📝</span>
               <p className={styles.emptyText}>No todos yet. Add one above!</p>
             </div>
           ) : (
